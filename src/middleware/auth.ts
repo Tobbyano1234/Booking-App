@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import httpStatus from "http-status";
 import { errorResponse, serverError } from "../utils/helperMethods";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const auth = async (
   req: Request,
@@ -11,7 +11,7 @@ export const auth = async (
   next: NextFunction
 ): Promise<unknown> => {
   try {
-    const token = req.headers.token;
+    const { token } = req.headers as any;
 
     if (!token) {
       return errorResponse(

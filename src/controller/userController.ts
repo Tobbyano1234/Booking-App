@@ -149,9 +149,9 @@ export const LoginUser = async (
       );
     }
 
-    const { _id } = user;
+    const { _id, isAdmin } = user;
 
-    const token = generateLoginToken({ _id, email });
+    const token = generateLoginToken({ _id, email, isAdmin });
 
     if (!user.isVerified) {
       return errorResponse(
@@ -233,4 +233,87 @@ export const ResetPassword = async (
   }
 };
 
-export const UpdateProfile = async (req: Request, res: Response) => {};
+export const UpdateProfile = async (req: Request, res: Response) => {
+  try {
+    const token = req.headers.token;
+
+    const { _id } = jwt.verify(token, JWT_SECRET);
+
+    const { fullName, phoneNumber, avatar } = req.body;
+
+    const user = await User.findById({ _id });
+    if (!user) {
+      return errorResponse(res, "User not found", httpStatus.NOT_FOUND);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      { _id },
+      {
+        fullName,
+        phoneNumber,
+        avatar,
+      }
+    );
+
+    return successResponse(
+      res,
+      "User updated successfully",
+      httpStatus.CREATED,
+      updatedUser
+    );
+  } catch (error) {
+    console.log(error);
+    return serverError(res);
+  }
+};
+
+export const getUser = async (req: Request, res: Response) => {
+  try {
+    const token = req.headers.token;
+
+    const { _id } = jwt.verify(token, JWT_SECRET);
+
+    const user = await User.findById({ _id });
+    if (!user) {
+      return errorResponse(res, "User not found", httpStatus.NOT_FOUND);
+    }
+
+    return successResponse(
+      res,
+      "Successfully fetched user",
+      httpStatus.OK,
+      user
+    );
+  } catch (error) {
+    console.log(error);
+    return serverError(res);
+  }
+};
+
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const token = req.headers.token;
+
+    const { _id } = jwt.verify(token, JWT_SECRET);
+
+    const record = await User.findById({ _id });
+    if (!record) {
+      return errorResponse(res, "Permission denied", httpStatus.BAD_REQUEST);
+    }
+
+    const users = await User.find();
+    if (!users) {
+      return errorResponse(res, "Users not found", httpStatus.NOT_FOUND);
+    }
+
+    return successResponse(
+      res,
+      "User updated successfully",
+      httpStatus.OK,
+      users
+    );
+  } catch (error) {
+    console.log(error);
+    return serverError(res);
+  }
+};

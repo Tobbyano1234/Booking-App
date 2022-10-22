@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateProfile = exports.ResetPassword = exports.ForgetPassword = exports.LoginUser = exports.VerifyUser = exports.RegisterUser = void 0;
+exports.getAllUsers = exports.getUser = exports.UpdateProfile = exports.ResetPassword = exports.ForgetPassword = exports.LoginUser = exports.VerifyUser = exports.RegisterUser = void 0;
 const helperMethods_1 = require("../utils/helperMethods");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const userModel_1 = __importDefault(require("../models/userModel"));
@@ -103,8 +103,8 @@ const LoginUser = async (req, res) => {
         if (!verifiedUser) {
             return (0, helperMethods_1.errorResponse)(res, "Incorrect credentials", http_status_1.default.UNAUTHORIZED);
         }
-        const { _id } = user;
-        const token = (0, utils_1.generateLoginToken)({ _id, email });
+        const { _id, isAdmin } = user;
+        const token = (0, utils_1.generateLoginToken)({ _id, email, isAdmin });
         if (!user.isVerified) {
             return (0, helperMethods_1.errorResponse)(res, "Kindly verify your email", http_status_1.default.UNAUTHORIZED);
         }
@@ -162,5 +162,61 @@ const ResetPassword = async (req, res) => {
     }
 };
 exports.ResetPassword = ResetPassword;
-const UpdateProfile = async (req, res) => { };
+const UpdateProfile = async (req, res) => {
+    try {
+        const token = req.headers.token;
+        const { _id } = jsonwebtoken_1.default.verify(token, JWT_SECRET);
+        const { fullName, phoneNumber, avatar } = req.body;
+        const user = await userModel_1.default.findById({ _id });
+        if (!user) {
+            return (0, helperMethods_1.errorResponse)(res, "User not found", http_status_1.default.NOT_FOUND);
+        }
+        const updatedUser = await userModel_1.default.findByIdAndUpdate({ _id }, {
+            fullName,
+            phoneNumber,
+            avatar,
+        });
+        return (0, helperMethods_1.successResponse)(res, "User updated successfully", http_status_1.default.CREATED, updatedUser);
+    }
+    catch (error) {
+        console.log(error);
+        return (0, helperMethods_1.serverError)(res);
+    }
+};
 exports.UpdateProfile = UpdateProfile;
+const getUser = async (req, res) => {
+    try {
+        const token = req.headers.token;
+        const { _id } = jsonwebtoken_1.default.verify(token, JWT_SECRET);
+        const user = await userModel_1.default.findById({ _id });
+        if (!user) {
+            return (0, helperMethods_1.errorResponse)(res, "User not found", http_status_1.default.NOT_FOUND);
+        }
+        return (0, helperMethods_1.successResponse)(res, "Successfully fetched user", http_status_1.default.OK, user);
+    }
+    catch (error) {
+        console.log(error);
+        return (0, helperMethods_1.serverError)(res);
+    }
+};
+exports.getUser = getUser;
+const getAllUsers = async (req, res) => {
+    try {
+        const token = req.headers.token;
+        const { _id } = jsonwebtoken_1.default.verify(token, JWT_SECRET);
+        const record = await userModel_1.default.findById({ _id });
+        if (!record) {
+            return (0, helperMethods_1.errorResponse)(res, "Permission denied", http_status_1.default.BAD_REQUEST);
+        }
+        const users = await userModel_1.default.find();
+        if (!users) {
+            return (0, helperMethods_1.errorResponse)(res, "Users not found", http_status_1.default.NOT_FOUND);
+        }
+        return (0, helperMethods_1.successResponse)(res, "User updated successfully", http_status_1.default.OK, users);
+    }
+    catch (error) {
+        console.log(error);
+        return (0, helperMethods_1.serverError)(res);
+    }
+};
+exports.getAllUsers = getAllUsers;

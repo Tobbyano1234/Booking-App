@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.options = exports.generateLoginToken = exports.changePasswordSchema = exports.forgotPasswordSchema = exports.loginSchema = exports.registerUserSchema = exports.updateHotelSchema = exports.createHotelSchema = void 0;
+exports.options = exports.generateLoginToken = exports.changePasswordSchema = exports.forgotPasswordSchema = exports.loginSchema = exports.updateUserSchema = exports.registerUserSchema = exports.updateHotelSchema = exports.createHotelSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 exports.createHotelSchema = joi_1.default.object({
@@ -47,6 +47,16 @@ exports.registerUserSchema = joi_1.default.object({
     isAdmin: joi_1.default.boolean().default(false),
     isVerified: joi_1.default.boolean().default(false),
 }).with("password", "confirmPassword");
+exports.updateUserSchema = joi_1.default.object({
+    fullName: joi_1.default.string().required(),
+    // userName: Joi.string().lowercase().required(),
+    // email: Joi.string().email().required(),
+    phoneNumber: joi_1.default.string()
+        .length(11)
+        .pattern(/^[0-9]+$/)
+        .required(),
+    avatar: joi_1.default.string(),
+});
 exports.loginSchema = joi_1.default.object().keys({
     email: joi_1.default.string().email().trim().lowercase(),
     userName: joi_1.default.string().trim().lowercase(),

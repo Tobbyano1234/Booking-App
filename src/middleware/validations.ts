@@ -6,6 +6,7 @@ import {
   updateHotelSchema,
   forgotPasswordSchema,
   changePasswordSchema,
+  updateUserSchema,
 } from "../utils/utils";
 import { Request, Response, NextFunction } from "express";
 import { errorResponse } from "../utils/helperMethods";
@@ -92,17 +93,17 @@ export const validateResetPassword = (
   next();
 };
 
-// export const validateUpdateHotel = (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   const validateHotel = updateHotelSchema.validate(req.body, options);
-//   if (validateHotel.error) {
-//     return errorResponse(res, validateHotel.error.details[0].message, 400);
-//   }
-//   next();
-// };
+export const validateUpdateUser = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const validateUser = updateUserSchema.validate(req.body, options);
+  if (validateUser.error) {
+    return errorResponse(res, validateUser.error.details[0].message, 400);
+  }
+  next();
+};
 
 // // maxprofit function?
 // function maxProfit(price, k) {

@@ -16,7 +16,6 @@ const UserSchema = new Schema<UserAttribute>(
   {
     userId: {
       type: String,
-      // required: true,
       unique: true,
     },
     fullName: {

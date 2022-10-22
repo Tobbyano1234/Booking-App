@@ -10,7 +10,7 @@ const helperMethods_1 = require("../utils/helperMethods");
 const JWT_SECRET = process.env.JWT_SECRET;
 const auth = async (req, res, next) => {
     try {
-        const token = req.headers.token;
+        const { token } = req.headers;
         if (!token) {
             return (0, helperMethods_1.errorResponse)(res, "Kindly sign in as a User", http_status_1.default.UNAUTHORIZED);
         }

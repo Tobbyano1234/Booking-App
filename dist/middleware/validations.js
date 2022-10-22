@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateResetPassword = exports.validateForgetPassword = exports.validateLoginUser = exports.validateRegisterUser = exports.validateUpdateHotel = exports.validateCreateHotel = void 0;
+exports.validateUpdateUser = exports.validateResetPassword = exports.validateForgetPassword = exports.validateLoginUser = exports.validateRegisterUser = exports.validateUpdateHotel = exports.validateCreateHotel = void 0;
 const utils_1 = require("../utils/utils");
 const helperMethods_1 = require("../utils/helperMethods");
 const validateCreateHotel = (req, res, next) => {
@@ -54,17 +54,14 @@ const validateResetPassword = (req, res, next) => {
     next();
 };
 exports.validateResetPassword = validateResetPassword;
-// export const validateUpdateHotel = (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   const validateHotel = updateHotelSchema.validate(req.body, options);
-//   if (validateHotel.error) {
-//     return errorResponse(res, validateHotel.error.details[0].message, 400);
-//   }
-//   next();
-// };
+const validateUpdateUser = (req, res, next) => {
+    const validateUser = utils_1.updateUserSchema.validate(req.body, utils_1.options);
+    if (validateUser.error) {
+        return (0, helperMethods_1.errorResponse)(res, validateUser.error.details[0].message, 400);
+    }
+    next();
+};
+exports.validateUpdateUser = validateUpdateUser;
 // // maxprofit function?
 // function maxProfit(price, k) {
 //   // check for the availability of at least two prices and 1 transaction

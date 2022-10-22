@@ -45,6 +45,17 @@ export const registerUserSchema = Joi.object({
   isVerified: Joi.boolean().default(false),
 }).with("password", "confirmPassword");
 
+export const updateUserSchema = Joi.object({
+  fullName: Joi.string().required(),
+  // userName: Joi.string().lowercase().required(),
+  // email: Joi.string().email().required(),
+  phoneNumber: Joi.string()
+    .length(11)
+    .pattern(/^[0-9]+$/)
+    .required(),
+  avatar: Joi.string(),
+});
+
 export const loginSchema = Joi.object().keys({
   email: Joi.string().email().trim().lowercase(),
   userName: Joi.string().trim().lowercase(),
