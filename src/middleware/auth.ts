@@ -2,8 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import httpStatus from "http-status";
 import { errorResponse, serverError } from "../utils/helperMethods";
-
-const JWT_SECRET = process.env.JWT_SECRET as string;
+import dotenv from "dotenv";
+dotenv.config();
+// const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_SECRET = process.env.JWT_SECRET as string | "hello" as string;
 
 export const auth = async (
   req: Request,

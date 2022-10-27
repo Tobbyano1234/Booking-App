@@ -1,15 +1,40 @@
 import { Request, Response, NextFunction } from "express";
 import httpStatus from "http-status";
+import jwt from "jsonwebtoken";
 import Hotel from "../models/hotelModel";
-import { serverError, successResponse } from "../utils/helperMethods";
+import {
+  errorResponse,
+  serverError,
+  successResponse,
+} from "../utils/helperMethods";
+import User from "../models/userModel";
+import dotenv from "dotenv";
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET as string;
+
+interface jwtPayload {
+  _id: string;
+  email: string;
+  userId: string;
+}
 
 export const CreateHotel = async (
-  req: Request,
+  req: Request | any,
   res: Response,
   next: NextFunction
 ) => {
-  const newHotel = new Hotel(req.body);
   try {
+    const token = req.headers.token;
+
+    const { _id } = jwt.verify(token, JWT_SECRET) as jwtPayload;
+
+    const userData = await User.findById({ _id });
+
+    if (!userData) {
+      errorResponse(res, "Kindly sign in as user", httpStatus.UNAUTHORIZED);
+    }
+    // const userId = _id;
+    const newHotel = new Hotel({ ...req.body, user: _id });
     const record = await newHotel.save();
 
     return successResponse(

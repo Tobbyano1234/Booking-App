@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const HotelSchema = new mongoose_1.Schema({
+    user: { type: mongoose_1.Schema.Types.ObjectId, ref: "User" },
     name: {
         type: String,
         required: true,
@@ -38,9 +39,12 @@ const HotelSchema = new mongoose_1.Schema({
         min: 0,
         max: 5,
     },
-    rooms: {
-        type: [String],
-    },
+    rooms: [
+        {
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: "Room",
+        },
+    ],
     cheapestPrice: {
         type: Number,
         required: true,

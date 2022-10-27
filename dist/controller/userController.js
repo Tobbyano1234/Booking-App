@@ -188,7 +188,7 @@ const getUser = async (req, res) => {
     try {
         const token = req.headers.token;
         const { _id } = jsonwebtoken_1.default.verify(token, JWT_SECRET);
-        const user = await userModel_1.default.findById({ _id });
+        const user = await userModel_1.default.findOne({ _id }).populate("docs");
         if (!user) {
             return (0, helperMethods_1.errorResponse)(res, "User not found", http_status_1.default.NOT_FOUND);
         }

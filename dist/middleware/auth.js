@@ -7,6 +7,9 @@ exports.auth = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const http_status_1 = __importDefault(require("http-status"));
 const helperMethods_1 = require("../utils/helperMethods");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+// const JWT_SECRET = process.env.JWT_SECRET as string;
 const JWT_SECRET = process.env.JWT_SECRET;
 const auth = async (req, res, next) => {
     try {

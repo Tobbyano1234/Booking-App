@@ -6,6 +6,7 @@ interface UserAttribute {
   userName: string;
   email: string;
   phoneNumber: string;
+  hotels: Array<string>;
   password: string;
   avatar?: string;
   isAdmin?: boolean;
@@ -42,7 +43,7 @@ const UserSchema = new Schema<UserAttribute>(
       type: String,
       required: true,
     },
-
+    hotels: [{ type: Schema.Types.ObjectId, ref: "Hotel" }],
     avatar: {
       type: String,
     },

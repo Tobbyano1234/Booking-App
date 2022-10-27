@@ -12,12 +12,13 @@ import { emailVerificationView } from "../mail/emailVerificationView";
 import { sendEmail } from "../mail/sendEmail";
 import jwt from "jsonwebtoken";
 import { forgotPasswordVerification } from "../mail/forgotPasswordVerification";
+import Hotel from "../models/hotelModel";
 require("dotenv").config();
 
 const fromUser = process.env.FROM as string;
 const emailVerification = process.env.SUBJECT_EMAIL as string;
 const passwordReset = process.env.SUBJECT_PASSWORD as string;
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_SECRET = process.env.JWT_SECRET as string | "hello" as string;
 
 interface jwtPayload {
   email: string;
@@ -209,9 +210,9 @@ export const ResetPassword = async (
 ): Promise<unknown> => {
   try {
     const { password } = req.body;
-    const token = req.headers.token;
+    const token = req.headers.token as any;
 
-    const { _id } = jwt.verify(token, JWT_SECRET);
+    const { _id } = jwt.verify(token, JWT_SECRET) as jwtPayload;
 
     const user = await User.findById({ _id });
 
@@ -235,9 +236,9 @@ export const ResetPassword = async (
 
 export const UpdateProfile = async (req: Request, res: Response) => {
   try {
-    const token = req.headers.token;
+    const token = req.headers.token as any;
 
-    const { _id } = jwt.verify(token, JWT_SECRET);
+    const { _id } = jwt.verify(token, JWT_SECRET) as jwtPayload;
 
     const { fullName, phoneNumber, avatar } = req.body;
 
@@ -269,11 +270,12 @@ export const UpdateProfile = async (req: Request, res: Response) => {
 
 export const getUser = async (req: Request, res: Response) => {
   try {
-    const token = req.headers.token;
+    const token = req.headers.token as any;
 
-    const { _id } = jwt.verify(token, JWT_SECRET);
+    const { _id } = jwt.verify(token, JWT_SECRET) as jwtPayload;
 
-    const user = await User.findById({ _id });
+    const user = await User.findOne({ _id }).populate("docs");
+
     if (!user) {
       return errorResponse(res, "User not found", httpStatus.NOT_FOUND);
     }
@@ -292,9 +294,9 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const token = req.headers.token;
+    const token = req.headers.token as any;
 
-    const { _id } = jwt.verify(token, JWT_SECRET);
+    const { _id } = jwt.verify(token, JWT_SECRET) as jwtPayload;
 
     const record = await User.findById({ _id });
     if (!record) {

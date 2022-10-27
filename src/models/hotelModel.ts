@@ -1,6 +1,7 @@
 import { Types, model, Schema } from "mongoose";
 
 interface HotelAttribute {
+  user: {};
   name: string;
   type: string;
   city: string;
@@ -17,6 +18,7 @@ interface HotelAttribute {
 
 const HotelSchema = new Schema<HotelAttribute>(
   {
+    user: { type: Schema.Types.ObjectId, ref: "User" },
     name: {
       type: String,
       required: true,
@@ -55,9 +57,12 @@ const HotelSchema = new Schema<HotelAttribute>(
       min: 0,
       max: 5,
     },
-    rooms: {
-      type: [String],
-    },
+    rooms: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Room",
+      },
+    ],
 
     cheapestPrice: {
       type: Number,
